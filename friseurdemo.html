@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZakiFlow KI-Automatisierungs-Demo: Friseure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 620px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 8px 0 0;
+            font-size: 15px;
+            opacity: 0.95;
+        }
+        .chat-window {
+            padding: 25px;
+            height: 500px;
+            overflow-y: auto;
+            background-color: #fafafa;
+        }
+        .message {
+            margin-bottom: 18px;
+            padding: 14px 18px;
+            border-radius: 20px;
+            max-width: 82%;
+            line-height: 1.5;
+            font-size: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .ki-message {
+            background-color: #eef5ff;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        .user-message {
+            background-color: #e0f2fe;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .input-area {
+            display: flex;
+            padding: 20px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 1px solid #ddd;
+            border-radius: 30px 0 0 30px;
+            outline: none;
+            font-size: 15px;
+        }
+        .input-area button {
+            padding: 14px 30px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0 30px 30px 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .call-simulation {
+            display: none;
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #f8fafc;
+        }
+        .call-animation {
+            width: 130px;
+            height: 130px;
+            background-color: #10b981;
+            border-radius: 50%;
+            margin: 25px auto;
+            animation: pulse 1.8s infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 52px;
+            box-shadow: 0 10px 30px rgba(16,185,129,0.3);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 25px rgba(16,185,129,0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+        }
+        .whatsapp-simulation {
+            display: none;
+            padding: 25px;
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        }
+        .whatsapp-header {
+            text-align: center;
+            color: #065f46;
+            margin-bottom: 20px;
+        }
+        .whatsapp-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .whatsapp-message {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .property {
+            margin: 18px 0;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #e6f3ed;
+        }
+        .property:last-child { border-bottom: none; }
+        .whatsapp-button {
+            display: block;
+            margin: 30px auto 10px;
+            padding: 16px 40px;
+            background-color: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 6px 16px rgba(37,211,102,0.3);
+            font-size: 16px;
+        }
+        /* Modal Styles for Pop-ups */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-width: 500px;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-header h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .modal-message {
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .close-button {
+            display: block;
+            margin: 20px auto 0;
+            padding: 12px 30px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 15px;
+        }
+        .review-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 16px 40px;
+            background-color: #4285F4;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 6px 16px rgba(66,133,244,0.3);
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ZakiFlow KI-Automatisierungs-Demo: Friseure in Mannheim</h1>
+            <p>Live-Simulation: KI-Chat → KI-Anruf → automatisches WhatsApp-Angebot → Erinnerung → Bewertung</p>
+        </div>
+
+        <div class="chat-window" id="chatWindow">
+            <div class="message ki-message">
+                Willkommen bei ZakiFlow! Wir sind eine KI-Automatisierungs-Agentur.<br>
+                Wie kann ich Ihnen behilflich sein?
+            </div>
+
+            <!-- Automatische Kundennachricht -->
+            <div class="message user-message" id="autoUserMessage" style="display:none;">
+                Ich suche einen Termin für einen Haarschnitt in Mannheim für mich und meine Freundin.
+            </div>
+        </div>
+
+        <div class="input-area" id="inputArea">
+            <input type="text" id="userInput" placeholder="Ihre Nachricht..." autocomplete="off">
+            <button onclick="sendMessage()">Senden</button>
+        </div>
+
+        <div class="call-simulation" id="callSimulation">
+            <h3>KI ruft automatisch an...</h3>
+            <div class="call-animation">📞</div>
+            <p style="font-size:18px; color:#374151; margin-top:20px;">Telefonat wird abgespielt (ca. 20 Sekunden)</p>
+            <audio id="callAudio" src="https://raw.githubusercontent.com/christianschroeder2210-star/friseure/403c4b110cc1105e1fb285d57131a46ab7245c35/ElevenLabs_2025-11-19T12_20_32_Leonie_pvc_sp120_s100_sb100_se36_b_m2.mp3" onended="endCall()"></audio>
+        </div>
+
+        <div class="whatsapp-simulation" id="whatsappSimulation">
+            <div class="whatsapp-header">
+                <h2>✨ Automatische WhatsApp-Antwort</h2>
+                <p>Basierend auf Budget & Wunschlage (Mannheim)</p>
+            </div>
+            <div class="whatsapp-message">
+                <p>Hallo! Vielen Dank für das Gespräch 👋</p>
+                <p>Hier sind 3 perfekt passende Friseur-Termine in Mannheim für Sie und Ihre Freundin:</p>
+                
+                <div class="property">
+                    <strong>1. Klassischer Herrenhaarschnitt + Damenstyling – Salon XY in Mannheim-Innenstadt</strong><br>
+                    Preis: <strong><span id="prop1Price"></span> €</strong><br>
+                    Termin: Morgen 14:00 Uhr · Inkl. Waschen & Pflege
+                </div>
+                <div class="property">
+                    <strong>2. Trendiger Cut + Färbung – Salon ABC in Mannheim-Neckarstadt</strong><br>
+                    Preis: <strong><span id="prop2Price"></span> €</strong><br>
+                    Termin: Übermorgen 16:30 Uhr · Mit Beratung
+                </div>
+                <div class="property">
+                    <strong>3. Paar-Special: Beide zusammen – Salon Z in Mannheim-Rheinau</strong><br>
+                    Preis: <strong><span id="prop3Price"></span> €</strong><br>
+                    Termin: Nächste Woche Mittwoch 10:00 Uhr · Inkl. Massage
+                </div>
+
+                <p>Welchen Termin buchen wir? Gerne sende ich Bestätigung und Wegbeschreibung!</p>
+            </div>
+            <a href="https://wa.me/34651492562" class="whatsapp-button" target="_blank">
+                ➜ Jetzt auf WhatsApp antworten
+            </a>
+        </div>
+    </div>
+
+    <!-- Reminder Modal -->
+    <div class="modal" id="reminderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔔 Automatische Erinnerung (2 Stunden vor Termin)</h2>
+            </div>
+            <div class="modal-message">
+                <p>Hallo! Ihr Termin beim Friseur in Mannheim startet in 2 Stunden. 😊</p>
+                <p>Adresse: Beispielstraße 123, Mannheim. Wir freuen uns auf Sie!</p>
+                <p>Falls Änderungen: Antworten Sie hier oder rufen Sie an.</p>
+            </div>
+            <button class="close-button" onclick="closeReminder()">Schließen</button>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal" id="reviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⭐ Nach dem Termin: Automatische Bewertungsanfrage</h2>
+            </div>
+            <div class="modal-message">
+                <p>Vielen Dank für Ihren Besuch! Wie war Ihr Erlebnis? Teilen Sie es mit einer schnellen Google-Bewertung.</p>
+            </div>
+            <a href="#" class="review-button" onclick="alert('Demo: Bewertung würde hier zu Google weiterleiten.')">
+                Jetzt bewerten auf Google
+            </a>
+            <button class="close-button" style="margin-top: 20px;" onclick="closeReview()">Schließen</button>
+        </div>
+    </div>
+
+    <script>
+        let budget = 0;
+        let step = 0;
+
+        // Automatische erste Kundennachricht nach 1,5 Sekunden
+        setTimeout(() => {
+            document.getElementById('autoUserMessage').style.display = 'block';
+            document.getElementById('chatWindow').scrollTop = document.getElementById('chatWindow').scrollHeight;
+
+            // KI antwortet direkt danach
+            setTimeout(() => {
+                addKiMessage("Super, ein Haarschnitt-Termin in Mannheim! ✂️<br>Welche Art von Haarschnitt wünschen Sie (z.B. Kurzhaar, Färben, Styling)? Und was ist Ihr Budget pro Person in €?");
+                document.getElementById('userInput').focus();
+            }, 1200);
+        }, 1500);
+
+        function addKiMessage(text) {
+            const chatWindow = document.getElementById('chatWindow');
+            const msg = document.createElement('div');
+            msg.className = 'message ki-message';
+            msg.innerHTML = text;
+            chatWindow.appendChild(msg);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            // User message
+            const chatWindow = document.getElementById('chatWindow');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user-message';
+            userMsg.textContent = text;
+            chatWindow.appendChild(userMsg);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            input.value = '';
+
+            if (step === 0) {
+                budget = parseInt(text.match(/\d+/g)?.[0] || 50) * 2; // Annahme: Budget pro Person, mal 2 für Paar
+                addKiMessage(`Perfekt! Budget: ${budget.toLocaleString()} € insgesamt.<br><br>Ich würde Sie jetzt kurz anrufen, um Verfügbarkeit und Details zu klären. Dauert nur 20 Sekunden – sind Sie bereit?`);
+
+                // Buttons statt Eingabefeld
+                document.getElementById('inputArea').innerHTML = `
+                    <button onclick="startCall()" style="margin:0 auto; display:block; padding:14px 50px; background:#10b981; color:white; border:none; border-radius:30px; font-size:16px; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(16,185,129,0.3);">Ja, jetzt anrufen</button>
+                `;
+                step = 1;
+            }
+        }
+
+        function startCall() {
+            document.getElementById('inputArea').style.display = 'none';
+            document.getElementById('callSimulation').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('callAudio').play();
+            }, 800);
+        }
+
+        function endCall() {
+            document.getElementById('callSimulation').style.display = 'none';
+            document.getElementById('whatsappSimulation').style.display = 'block';
+
+            // Preise leicht unter/auf Budget
+            document.getElementById('prop1Price').textContent = Math.round(budget * 0.8).toLocaleString();
+            document.getElementById('prop2Price').textContent = Math.round(budget * 0.9).toLocaleString();
+            document.getElementById('prop3Price').textContent = budget.toLocaleString();
+
+            // Automatisch zur Erinnerung-Pop-up übergehen nach 3 Sekunden
+            setTimeout(showReminder, 3000);
+        }
+
+        function showReminder() {
+            document.getElementById('reminderModal').style.display = 'flex';
+        }
+
+        function closeReminder() {
+            document.getElementById('reminderModal').style.display = 'none';
+            // Automatisch zur Bewertung-Pop-up übergehen nach Schließen (oder direkt nach 3 Sekunden)
+            setTimeout(showReview, 1000); // Leichte Verzögerung für smooth Übergang
+        }
+
+        function showReview() {
+            document.getElementById('reviewModal').style.display = 'flex';
+        }
+
+        function closeReview() {
+            document.getElementById('reviewModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
